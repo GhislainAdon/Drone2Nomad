@@ -1,0 +1,22 @@
+kind: pipeline
+type: exec
+name: default
+
+steps:
+- name: Deploy2nomad
+  environment:
+    SERVICE_NAME:
+      from_secret: SERVICE_NAME
+    APPLICATION_NAME:
+      from_secret: APPLICATION_NAME
+    SERVICE_VERSION:
+      from_secret: SERVICE_VERSION
+    SERVICE_PORT:
+      from_secret: SERVICE_PORT
+    NOMAD_IP:
+      from_secret: NOMAD_IP
+  commands:
+  - export NOMAD_ADDR='http://$NOMAD_IP:4646'
+  - j2 srv-template.nomad.template > {{ SERVICE_NAME }}-{{ PROJECT_NAME }}.nomad
+  - nomad job run $SERVICE_NAME-$PROJECT_NAME.nomad
+
