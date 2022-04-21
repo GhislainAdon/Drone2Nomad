@@ -19,6 +19,6 @@ steps:
   commands:
   - pwd
   - export NOMAD_ADDR="http://$NOMAD_IP:4646"
-  - j2 srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
+  - j2 /drone/src/srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
   - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
 
