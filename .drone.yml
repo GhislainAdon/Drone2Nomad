@@ -18,7 +18,6 @@ steps:
       from_secret: NOMAD_IP
   commands:
   - export NOMAD_ADDR="http://$NOMAD_IP:4646"
-  - echo $NOMAD_ADDR
-  - j2 srv-template.nomad.template > $SERVICE_NAME-$APPLICATION_NAME.nomad
+  - j2 srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
   - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
 
