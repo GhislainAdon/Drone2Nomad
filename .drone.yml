@@ -22,9 +22,8 @@ steps:
   - j2 /drone/src/srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
   - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
   
- - name: notification
-   image: appleboy/drone-telegram
-   settings:
+- name: notification
+  environment:
      token:
        from_secret: TELEGRAM_TOKEN
      to: 
@@ -36,11 +35,12 @@ steps:
        {{else}}
          🛑 failed for 👷‍♂️ build {{build.number}}
        {{/success}}
-   when:
+  commands: pingme telegram --token "$token" --title "`hostname -I`" --msg "$message" --channel="$to"
+  when:
      status:
        - failure
        - success
-   depends_on:
+  depends_on:
      - Deploy2nomad
    
 
