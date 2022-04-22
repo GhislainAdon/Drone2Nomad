@@ -22,7 +22,7 @@ steps:
   - j2 /drone/src/srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
   - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
   
-
+---
 kind: pipeline
 type: docker
 name: Notify
