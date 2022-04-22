@@ -21,4 +21,30 @@ steps:
   - export NOMAD_ADDR="http://$NOMAD_IP:4646"
   - j2 /drone/src/srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
   - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
+  
+
+kind: pipeline
+type: docker
+name: Notify
+
+ - name: notification
+   image: appleboy/drone-telegram
+   settings:
+     token:
+       from_secret: TELEGRAM_TOKEN
+     to: 
+       from_secret: TELEGRAM_ID
+     message: >
+       📝 {{repo.name}} / {{commit.branch}} - {{commit.message}}
+       {{#success build.status}}
+         ✅ succeeded  for 👷‍♂️ build {{build.number}}
+       {{else}}
+         🛑 failed for 👷‍♂️ build {{build.number}}
+       {{/success}}
+   when:
+     status:
+       - failure
+       - success
+   depends_on:
+     - Deploy2nomad
 
