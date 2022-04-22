@@ -46,5 +46,5 @@ steps:
        - failure
        - success
    depends_on:
-     - Deploy2nomad
+     - default
 
