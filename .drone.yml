@@ -35,7 +35,8 @@ steps:
        {{else}}
          🛑 failed for 👷‍♂️ build {{build.number}}
        {{/success}}
-  commands: pingme telegram --token "$token" --title "`hostname -I`" --msg "$message" --channel="$to"
+  commands: 
+  - pingme telegram --token "$token" --title "`hostname -I`" --msg "$message" --channel="$to"
   when:
      status:
        - failure
