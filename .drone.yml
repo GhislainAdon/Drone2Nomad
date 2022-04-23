@@ -30,7 +30,7 @@ steps:
      to: 
        from_secret: TELEGRAM_ID
      message: >
-       📝 {{repo.name}} / {{commit.branch}} - {{commit.message}}
+       📝 $repo.name / {{commit.branch}} - {{commit.message}}
        {{#success build.status}}
          ✅ succeeded  for 👷‍♂️ build {{build.number}}
        {{else}}
