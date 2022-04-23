@@ -20,7 +20,7 @@ steps:
   - pwd
   - export NOMAD_ADDR="http://$NOMAD_IP:4646"
   - j2 /drone/src/srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
-  - nomad job plan $SERVICE_NAME-$APPLICARION_NAME.nomad
+  - nomad job plan $SERVICE_NAME-$APPLICATION_NAME.nomad
   - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
   
 - name: notification
