@@ -1,55 +1,40 @@
-kind: pipeline
-type: exec
-name: deploy2nomad
-workspace:
-  path: /drone/src
-steps:
-- name: Deploy
-  environment:
-    SERVICE_NAME:
-      from_secret: SERVICE_NAME
-    APPLICATION_NAME:
-      from_secret: APPLICATION_NAME
-    SERVICE_VERSION:
-      from_secret: SERVICE_VERSION
-    SERVICE_PORT:
-      from_secret: SERVICE_PORT
-    NOMAD_IP:
-      from_secret: NOMAD_IP
-  commands:
-  - pwd
-  - export NOMAD_ADDR="http://$NOMAD_IP:4646"
-  - j2 /drone/src/srv-template.nomad > $SERVICE_NAME-$APPLICATION_NAME.nomad
-  - nomad job validate $SERVICE_NAME-$APPLICATION_NAME.nomad
-  - nomad job plan $SERVICE_NAME-$APPLICATION_NAME.nomad
-  - nomad job run $SERVICE_NAME-$APPLICATION_NAME.nomad
----
+definitions:
+- &DOCKER_SETTINGS 
+  username:
+    from_secret: DOCKER_USERNAME
+  password:
+    from_secret: DOCKER_PASSWORD
+
 # https://cogarius.medium.com/1-3-complete-guide-to-ci-cd-pipelines-with-drone-io-a53daaf28cf6
 kind: pipeline
 type: docker
-name: notification
+name: Push on Docker HUB
 
 steps:
 
- - name: notification
-   image: appleboy/drone-telegram
+ - name: publish 
+   image: plugins/docker
+   #environment:
+   #  SWARM_MODULE_VERSION: blabla
+   #  SWARM_MODULE_NAME: blabla
    settings:
-     token:
-       from_secret: TELEGRAM_TOKEN
-     to: 
-       from_secret: TELEGRAM_ID
-     message: >
-       📝 {{repo.name}} / {{commit.branch}} - {{commit.message}}
-       {{#success build.status}}
-         ✅ succeeded  for 👷‍♂️ build {{build.number}}
-       {{else}}
-         🛑 failed for 👷‍♂️ build {{build.number}}
-       {{/success}}
+     context: .
+     repo: 
+       from_secret: ${APPLICATION_NAME}/${SERVICE_NAME}
+     dockerfile: ./modules/swarm-fleet-obineo/setup/Dockerfile #./setup/Dockerfile
+     <<: *DOCKER_SETTINGS
+     #build_args_from_env:
+     #- SWARM_MODULE_VERSION
+     #- SWARM_MODULE_NAME
+     tag:
+     - latest  
+     - ${DRONE_BUILD_NUMBER}
    when:
-     status:
-       - failure
-       - success
-depends_on:
-  - deploy2nomad
+     branch:
+     - production
+     - main
+
+#depends_on:
+#  - deploy2nomad
    
 
