@@ -21,14 +21,14 @@ steps:
      context: .
      repo: 
        from_secret: ${APPLICATION_NAME}/${SERVICE_NAME}
-     dockerfile: ./modules/swarm-fleet-obineo/setup/Dockerfile #./setup/Dockerfile
+     dockerfile: Dockerfile #./setup/Dockerfile
      <<: *DOCKER_SETTINGS
      #build_args_from_env:
      #- SWARM_MODULE_VERSION
      #- SWARM_MODULE_NAME
      tag:
      - latest  
-     - ${DRONE_BUILD_NUMBER}
+     - ${DRONE_TAG} #${DRONE_BUILD_NUMBER}
    when:
      branch:
      - production
